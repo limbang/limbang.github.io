@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #ff009e; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #ff009e, 0 0 5px #ff009e; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #ff009e;    /*上边框颜色*/
+        border-left-color: #ff009e;    /*左边框颜色*/
+    }
+</style>
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.3">
+
+
+
+
+
+
+
+  <meta name="keywords" content="-健壮性," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="注意：本文章仅供学习交流使用，请勿用作非法用途，造成的一切后果使用者自己承担。">
+<meta name="keywords" content="-健壮性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈游戏设计的健壮性">
+<meta property="og:url" content="http://limbang.top/2014/03/02/浅谈游戏设计的健壮性/index.html">
+<meta property="og:site_name" content="limbang&#39;s blog">
+<meta property="og:description" content="注意：本文章仅供学习交流使用，请勿用作非法用途，造成的一切后果使用者自己承担。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://limbang.top/img/Robustness/Robust_Title.jpg">
+<meta property="og:updated_time" content="2017-11-12T09:17:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅谈游戏设计的健壮性">
+<meta name="twitter:description" content="注意：本文章仅供学习交流使用，请勿用作非法用途，造成的一切后果使用者自己承担。">
+<meta name="twitter:image" content="http://limbang.top/img/Robustness/Robust_Title.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://limbang.top/2014/03/02/浅谈游戏设计的健壮性/"/>
+
+
+
+
+
+  <title>浅谈游戏设计的健壮性 | limbang's blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?edade83943095de55cc94423acba3499";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">limbang's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Don't say impossible, nothing is impossible.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://limbang.top/2014/03/02/浅谈游戏设计的健壮性/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="limbang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="limbang's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">浅谈游戏设计的健壮性</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-03-02T16:53:03+08:00">
+                2014-03-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2014/03/02/浅谈游戏设计的健壮性/" class="leancloud_visitors" data-flag-title="浅谈游戏设计的健壮性">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="/img/Robustness/Robust_Title.jpg" alt="Robustness"></p>
+<p><code>注意：本文章仅供学习交流使用，请勿用作非法用途，造成的一切后果使用者自己承担。</code><br><a id="more"></a> </p>
+<blockquote>
+<p>本文游戏 <a href="http://www.44vs.com/" target="_blank" rel="external">http://www.44vs.com/</a></p>
+</blockquote>
+<p>##什么是健壮性？</p>
+<p>健壮性又称<a href="http://baike.baidu.com/view/45520.htm" target="_blank" rel="external">鲁棒性</a>，是指软件对于规范要求以外的输入情况的处理能力。</p>
+<ul>
+<li>所谓健壮的系统是指对于规范要求以外的输入能够判断出这个输入不符合规范要求，并能有合理的处理方式。</li>
+<li>另外健壮性有时也和<a href="http://baike.baidu.com/view/2700299.htm" target="_blank" rel="external">容错性</a>，可移植性，正确性有交叉的地方。</li>
+<li>比如，一个软件可以从错误的输入推断出正确合理的输入，这属于<a href="http://baike.baidu.com/view/2700299.htm" target="_blank" rel="external">容错性</a>量度标准，但是也可以认为这个软件是健壮的。</li>
+<li>一个软件可以正确地运行在不同环境下，则认为<a href="http://baike.baidu.com/view/4702115.htm" target="_blank" rel="external">软件可移植性</a>高，也可以叫，软件在不同平台下是健壮的。</li>
+<li>一个软件能够检测自己内部的设计或者编码错误，并得到正确的执行结果，这是软件的正确性标准，但是也可以说，软件有内部的保护机制，是模块级健壮的。</li>
+<li>软件健壮性是一个比较模糊的概念，但是却是非常重要的软件外部量度标准。软件设计的健壮与否直接反应了分析设计和编码人员的水平。即所谓的高手写的程序不容易死。</li>
+</ul>
+<p>##游戏分析之人物性别变化<br>打开游戏的换装，然后保存装扮的时候，会发现游戏向下面这个地址<code>UpDateXingXiang.do</code>(形象数据)发送了一个POST数据包，可以看出该数据是一个标准的<a href="http://baike.baidu.com/view/159832.htm" target="_blank" rel="external">XML</a>格式的数据，root根元素下面有个物品(wupin)子元素，物品元素下面可以看见<code>uid</code>(user id 用户id的意思)、<code>原型</code>、发型、鼻子等子元素，发型鼻子等里面的内容就是物品的编号，<code>原型 0 就是男 1 就是女</code>，然后更改原型的内容后像这个地址提交后，刷新游戏会发现游戏人物变性了，这里就是我们所说的健壮性，如果是规范输入是不会更改原型的，但是我们可以手动的修改，只需要uid即可。</p>
+<p>uid的获取方法可以加这个人为好友就知道这个人的uid了。</p>
+<p>改进方法：<code>服务端过滤掉原型的修改</code></p>
+<p>地址:</p>
+<pre><code>http://app100688787.qzone.qzoneapp.com/web/KillGame/UpDateXingXiang.do
+</code></pre><p>提交数据:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ROOT</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">wupin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">uid</span>&gt;</span>12034233<span class="tag">&lt;/<span class="name">uid</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">yuanxing</span>&gt;</span>1<span class="tag">&lt;/<span class="name">yuanxing</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">faxing</span>&gt;</span>27<span class="tag">&lt;/<span class="name">faxing</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">yanjing</span>&gt;</span>8<span class="tag">&lt;/<span class="name">yanjing</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bizi</span>&gt;</span>1<span class="tag">&lt;/<span class="name">bizi</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">zui</span>&gt;</span>1<span class="tag">&lt;/<span class="name">zui</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">er</span>&gt;</span>1<span class="tag">&lt;/<span class="name">er</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">yifu</span>&gt;</span>-1<span class="tag">&lt;/<span class="name">yifu</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">kuzi</span>&gt;</span>-1<span class="tag">&lt;/<span class="name">kuzi</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">xie</span>&gt;</span>-1<span class="tag">&lt;/<span class="name">xie</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">shipin</span>&gt;</span>-1<span class="tag">&lt;/<span class="name">shipin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">neishipin</span>&gt;</span>-1<span class="tag">&lt;/<span class="name">neishipin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">taozhuang</span>&gt;</span>-1<span class="tag">&lt;/<span class="name">taozhuang</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">erhuan</span>&gt;</span>-1<span class="tag">&lt;/<span class="name">erhuan</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">xianglian</span>&gt;</span>-1<span class="tag">&lt;/<span class="name">xianglian</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">weijin</span>&gt;</span>-1<span class="tag">&lt;/<span class="name">weijin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">wenshen</span>&gt;</span>-1<span class="tag">&lt;/<span class="name">wenshen</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">beijing</span>&gt;</span>-1<span class="tag">&lt;/<span class="name">beijing</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">wupin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ROOT</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>##游戏分析之刷物品<br>打开游戏随便卖件东西，会发现游戏向下面这个地址<code>GouMaiWuPin.do</code>(购买物品)发送了一个POST数据包，来看看item下的子元素，有用户名(userName)、密码(password)、<code>游戏物品id</code>(gameitemsid)、uid、<code>价格</code>(jiage)等。</p>
+<p>在来看看打开商城的时候会获取的什么数据，每个<gameitems>下返回的数据如下：</gameitems></p>
+<pre><code>GameItemsId   （游戏物品id）    2352
+yuanxing      （原型）          1
+itemtype      （物品类型）      taozhuang
+itemnumber    （物品编号）      587
+itemname      （物品名称）      Ⅱ°止于心づ&lt;    
+jiage1        （金豆7天）       180
+jiage2        （金豆30天）      540
+jiage3        （金豆永久）      999999999
+silverjiage1  （银豆7天）       0
+silverjiage2  （银豆30天）      0
+</code></pre><p>可以看到银豆都是0，修改买东西的数据把价格改成4，可以看到返回内容是购买成功，送物品也是类似。</p>
+<p>改进方法：<code>服务端判断所有小于0的价格都提示余额不足。</code></p>
+<p>买东西地址:</p>
+<pre><code>http://app100688787.qzone.qzoneapp.com/web/KillGame/GouMaiWuPin.do
+</code></pre><p>买东西提交数据:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ROOT</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">item</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">userName</span>&gt;</span>&lt;![CDATA[专业守房001号]]&gt;<span class="tag">&lt;/<span class="name">userName</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">password</span>&gt;</span>111111<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">uid</span>&gt;</span>12034233<span class="tag">&lt;/<span class="name">uid</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">gameitemsid</span>&gt;</span>2352<span class="tag">&lt;/<span class="name">gameitemsid</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">jiaGe</span>&gt;</span>1<span class="tag">&lt;/<span class="name">jiaGe</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">gametype</span>&gt;</span>killtext<span class="tag">&lt;/<span class="name">gametype</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">item</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ROOT</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>道具商城地址:</p>
+<pre><code>http://app100688787.qzone.qzoneapp.com/web/KillGame/DaoJuShangChengKill.do
+</code></pre><p>道具商城提交数据:<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ROOT</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">wupin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">uid</span>&gt;</span>12034233<span class="tag">&lt;/<span class="name">uid</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">yuanxing</span>&gt;</span>1<span class="tag">&lt;/<span class="name">yuanxing</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">itemtype</span>&gt;</span>tuijian<span class="tag">&lt;/<span class="name">itemtype</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">page</span>&gt;</span>1<span class="tag">&lt;/<span class="name">page</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">showCount</span>&gt;</span>9<span class="tag">&lt;/<span class="name">showCount</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">goumaiflg</span>&gt;</span>0<span class="tag">&lt;/<span class="name">goumaiflg</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">wupin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ROOT</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>道具商城返回数据:<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">root</span>&gt;</span><span class="tag">&lt;<span class="name">totalPage</span>&gt;</span>6<span class="tag">&lt;/<span class="name">totalPage</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">current</span>&gt;</span>1<span class="tag">&lt;/<span class="name">current</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItemsId</span>&gt;</span>2352<span class="tag">&lt;/<span class="name">GameItemsId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">yuanxing</span>&gt;</span>1<span class="tag">&lt;/<span class="name">yuanxing</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemtype</span>&gt;</span>taozhuang<span class="tag">&lt;/<span class="name">itemtype</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemnumber</span>&gt;</span>587<span class="tag">&lt;/<span class="name">itemnumber</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemname</span>&gt;</span>Ⅱ°止于心づ<span class="tag">&lt;/<span class="name">itemname</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage1</span>&gt;</span>180<span class="tag">&lt;/<span class="name">jiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage2</span>&gt;</span>540<span class="tag">&lt;/<span class="name">jiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage3</span>&gt;</span>999999999<span class="tag">&lt;/<span class="name">jiage3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage1</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage2</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">tuijianflg</span>&gt;</span>1<span class="tag">&lt;/<span class="name">tuijianflg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">shuoming</span>&gt;</span><span class="tag">&lt;/<span class="name">shuoming</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItemsId</span>&gt;</span>2296<span class="tag">&lt;/<span class="name">GameItemsId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">yuanxing</span>&gt;</span>2<span class="tag">&lt;/<span class="name">yuanxing</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemtype</span>&gt;</span>beijing<span class="tag">&lt;/<span class="name">itemtype</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemnumber</span>&gt;</span>579<span class="tag">&lt;/<span class="name">itemnumber</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemname</span>&gt;</span>火了火了火<span class="tag">&lt;/<span class="name">itemname</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage1</span>&gt;</span>80<span class="tag">&lt;/<span class="name">jiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage2</span>&gt;</span>240<span class="tag">&lt;/<span class="name">jiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage3</span>&gt;</span>999999999<span class="tag">&lt;/<span class="name">jiage3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage1</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage2</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">tuijianflg</span>&gt;</span>1<span class="tag">&lt;/<span class="name">tuijianflg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">shuoming</span>&gt;</span><span class="tag">&lt;/<span class="name">shuoming</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItemsId</span>&gt;</span>2244<span class="tag">&lt;/<span class="name">GameItemsId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">yuanxing</span>&gt;</span>2<span class="tag">&lt;/<span class="name">yuanxing</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemtype</span>&gt;</span>beijing<span class="tag">&lt;/<span class="name">itemtype</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemnumber</span>&gt;</span>563<span class="tag">&lt;/<span class="name">itemnumber</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemname</span>&gt;</span>一世诺言<span class="tag">&lt;/<span class="name">itemname</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage1</span>&gt;</span>80<span class="tag">&lt;/<span class="name">jiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage2</span>&gt;</span>240<span class="tag">&lt;/<span class="name">jiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage3</span>&gt;</span>999999999<span class="tag">&lt;/<span class="name">jiage3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage1</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage2</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">tuijianflg</span>&gt;</span>1<span class="tag">&lt;/<span class="name">tuijianflg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">shuoming</span>&gt;</span><span class="tag">&lt;/<span class="name">shuoming</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItemsId</span>&gt;</span>2218<span class="tag">&lt;/<span class="name">GameItemsId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">yuanxing</span>&gt;</span>1<span class="tag">&lt;/<span class="name">yuanxing</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemtype</span>&gt;</span>taozhuang<span class="tag">&lt;/<span class="name">itemtype</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemnumber</span>&gt;</span>543<span class="tag">&lt;/<span class="name">itemnumber</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemname</span>&gt;</span>么-虎鸭鸭<span class="tag">&lt;/<span class="name">itemname</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage1</span>&gt;</span>180<span class="tag">&lt;/<span class="name">jiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage2</span>&gt;</span>540<span class="tag">&lt;/<span class="name">jiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage3</span>&gt;</span>999999999<span class="tag">&lt;/<span class="name">jiage3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage1</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage2</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">tuijianflg</span>&gt;</span>1<span class="tag">&lt;/<span class="name">tuijianflg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">shuoming</span>&gt;</span><span class="tag">&lt;/<span class="name">shuoming</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItemsId</span>&gt;</span>2215<span class="tag">&lt;/<span class="name">GameItemsId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">yuanxing</span>&gt;</span>1<span class="tag">&lt;/<span class="name">yuanxing</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemtype</span>&gt;</span>taozhuang<span class="tag">&lt;/<span class="name">itemtype</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemnumber</span>&gt;</span>540<span class="tag">&lt;/<span class="name">itemnumber</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemname</span>&gt;</span>ノ綄羙揷麯ヽ<span class="tag">&lt;/<span class="name">itemname</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage1</span>&gt;</span>180<span class="tag">&lt;/<span class="name">jiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage2</span>&gt;</span>540<span class="tag">&lt;/<span class="name">jiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage3</span>&gt;</span>999999999<span class="tag">&lt;/<span class="name">jiage3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage1</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage2</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">tuijianflg</span>&gt;</span>1<span class="tag">&lt;/<span class="name">tuijianflg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">shuoming</span>&gt;</span><span class="tag">&lt;/<span class="name">shuoming</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItemsId</span>&gt;</span>2187<span class="tag">&lt;/<span class="name">GameItemsId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">yuanxing</span>&gt;</span>2<span class="tag">&lt;/<span class="name">yuanxing</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemtype</span>&gt;</span>beijing<span class="tag">&lt;/<span class="name">itemtype</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemnumber</span>&gt;</span>542<span class="tag">&lt;/<span class="name">itemnumber</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemname</span>&gt;</span>柠✿6聊9<span class="tag">&lt;/<span class="name">itemname</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage1</span>&gt;</span>80<span class="tag">&lt;/<span class="name">jiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage2</span>&gt;</span>240<span class="tag">&lt;/<span class="name">jiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage3</span>&gt;</span>999999999<span class="tag">&lt;/<span class="name">jiage3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage1</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage2</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">tuijianflg</span>&gt;</span>1<span class="tag">&lt;/<span class="name">tuijianflg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">shuoming</span>&gt;</span><span class="tag">&lt;/<span class="name">shuoming</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItemsId</span>&gt;</span>2168<span class="tag">&lt;/<span class="name">GameItemsId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">yuanxing</span>&gt;</span>2<span class="tag">&lt;/<span class="name">yuanxing</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemtype</span>&gt;</span>beijing<span class="tag">&lt;/<span class="name">itemtype</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemnumber</span>&gt;</span>535<span class="tag">&lt;/<span class="name">itemnumber</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemname</span>&gt;</span>╰ 砡〆潔<span class="tag">&lt;/<span class="name">itemname</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage1</span>&gt;</span>80<span class="tag">&lt;/<span class="name">jiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage2</span>&gt;</span>240<span class="tag">&lt;/<span class="name">jiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage3</span>&gt;</span>999999999<span class="tag">&lt;/<span class="name">jiage3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage1</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage2</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">tuijianflg</span>&gt;</span>1<span class="tag">&lt;/<span class="name">tuijianflg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">shuoming</span>&gt;</span><span class="tag">&lt;/<span class="name">shuoming</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItemsId</span>&gt;</span>2143<span class="tag">&lt;/<span class="name">GameItemsId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">yuanxing</span>&gt;</span>1<span class="tag">&lt;/<span class="name">yuanxing</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemtype</span>&gt;</span>taozhuang<span class="tag">&lt;/<span class="name">itemtype</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemnumber</span>&gt;</span>516<span class="tag">&lt;/<span class="name">itemnumber</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemname</span>&gt;</span>__倾倩天下<span class="tag">&lt;/<span class="name">itemname</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage1</span>&gt;</span>180<span class="tag">&lt;/<span class="name">jiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage2</span>&gt;</span>540<span class="tag">&lt;/<span class="name">jiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage3</span>&gt;</span>999999999<span class="tag">&lt;/<span class="name">jiage3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage1</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage2</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">tuijianflg</span>&gt;</span>1<span class="tag">&lt;/<span class="name">tuijianflg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">shuoming</span>&gt;</span><span class="tag">&lt;/<span class="name">shuoming</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;<span class="name">GameItemsId</span>&gt;</span>2128<span class="tag">&lt;/<span class="name">GameItemsId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">yuanxing</span>&gt;</span>1<span class="tag">&lt;/<span class="name">yuanxing</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemtype</span>&gt;</span>taozhuang<span class="tag">&lt;/<span class="name">itemtype</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemnumber</span>&gt;</span>513<span class="tag">&lt;/<span class="name">itemnumber</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">itemname</span>&gt;</span>葱葱点点<span class="tag">&lt;/<span class="name">itemname</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage1</span>&gt;</span>180<span class="tag">&lt;/<span class="name">jiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage2</span>&gt;</span>540<span class="tag">&lt;/<span class="name">jiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">jiage3</span>&gt;</span>999999999<span class="tag">&lt;/<span class="name">jiage3</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage1</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">silverjiage2</span>&gt;</span>0<span class="tag">&lt;/<span class="name">silverjiage2</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">tuijianflg</span>&gt;</span>1<span class="tag">&lt;/<span class="name">tuijianflg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">shuoming</span>&gt;</span><span class="tag">&lt;/<span class="name">shuoming</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">GameItems</span>&gt;</span><span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    <div style="text-align:center;color: #ccc;font-size:14px;">---------------- The End ----------------</div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/健壮性/" rel="tag"># -健壮性</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/10/测试/" rel="prev" title="测试">
+                测试 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+
+      <div>
+        <p id="div-border-left-red">
+        <b>本文基于<a target="_blank" title="Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)" href="http://creativecommons.org/licenses/by-sa/4.0/"> 知识共享署名-相同方式共享 4.0 </a>国际许可协议发布</b><br/>
+        <span>
+        <b>本文地址：</b><a href="/2014/03/02/浅谈游戏设计的健壮性/" title="浅谈游戏设计的健壮性">http://limbang.top/2014/03/02/浅谈游戏设计的健壮性/</a><br/><b>转载请注明出处，谢谢！</b>
+        </span>
+        </p>
+      </div>
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!--MOB SHARE BEGIN-->
+<div class="-hoofoo-share-title">分享到：</div>
+<div class="-hoofoo-share-buttons">
+    <div class="-mob-share-weibo -hoofoo-share-weibo -hoofoo-share-ui-button"><i class="fa fa-weibo" aria-hidden="true"></i></div>
+    <div class="-mob-share-weixin -hoofoo-share-weixin -hoofoo-share-ui-button"><i class="fa fa-weixin" aria-hidden="true"></i></div>
+    <div class="-mob-share-qq -hoofoo-share-qq -hoofoo-share-ui-button"><i class="fa fa-qq" aria-hidden="true"></i></div>
+    <div class="-mob-share-twitter -hoofoo-share-twitter -hoofoo-share-ui-button"><i class="fa fa-twitter" aria-hidden="true"></i></div>
+    <div class="-hoofoo-share-more -hoofoo-share-ui-button -mob-share-open"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></div>
+</div>
+<div class="-mob-share-ui" style="display: none">
+    <ul class="-mob-share-list">
+        <li class="-mob-share-weibo"><p>新浪微博</p></li>
+        <li class="-mob-share-weixin"><p>微信</p></li>
+        <li class="-mob-share-qzone"><p>QQ空间</p></li>
+        <li class="-mob-share-qq"><p>QQ好友</p></li>
+        <li class="-mob-share-tencentweibo"><p>腾讯微博</p></li>
+        <li class="-mob-share-renren"><p>人人网</p></li>
+        <li class="-mob-share-kaixin"><p>开心网</p></li>
+        <li class="-mob-share-douban"><p>豆瓣</p></li>
+        <li class="-mob-share-youdao"><p>有道云笔记</p></li>
+        <li class="-mob-share-mingdao"><p>明道</p></li>
+        <li class="-mob-share-pengyou"><p>朋友网</p></li>
+        <li class="-mob-share-facebook"><p>Facebook</p></li>
+        <li class="-mob-share-twitter"><p>Twitter</p></li>
+        <li class="-mob-share-pocket"><p>Pocket</p></li>
+        <li class="-mob-share-google"><p>Google+</p></li>
+        <li class="-mob-share-tumblr"><p>Tumblr</p></li>
+        <li class="-mob-share-instapaper"><p>Instapaper</p></li>
+        <li class="-mob-share-linkedin"><p>Linkedin</p></li>
+    </ul>
+    <div class="-mob-share-close">取消</div>
+</div>
+<div class="-mob-share-ui-bg"></div>
+<script id="-mob-share" src="http://f1.webshare.mob.com/code/mob-share.js?appkey=2247867e1eeb0"></script>
+<!--MOB SHARE END-->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMTc4Ni84MzUw"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="limbang" />
+            
+              <p class="site-author-name" itemprop="name">limbang</p>
+              <p class="site-description motion-element" itemprop="description">如果每个人都懂你，那你得普通成什么样子？</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/limbang" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github-alt"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.facebook.com/limbang93" target="_blank" title="Facebook">
+                    
+                      <i class="fa fa-fw fa-facebook-official"></i>Facebook</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/limbang" target="_blank" title="微博">
+                    
+                      <i class="fa fa-fw fa-weibo"></i>微博</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://www.zhihu.com/people/limbang" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limbang</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("ODkRTArhnUkW6GmMp6hbKUBe-gzGzoHsz", "g64PubViSyp3xKgYgzvQCdop");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  <script type="text/javascript" color="67,221,230" opacity='0.5' zIndex="-2" count="150" src="//cdn.bootcss.com/canvas-nest.js/1.0.1/canvas-nest.min.js"></script>
+
+
+<script type="text/javascript">
+    //微信二维码点击背景关闭
+    $('body').delegate('.-mob-share-weixin-qrcode-bg','click', function(){
+         $(".-mob-share-weixin-qrcode-close").trigger("click");
+    }); 
+</script>
+
+
+</body>
+</html>
